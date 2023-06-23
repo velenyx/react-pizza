@@ -1,22 +1,18 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
-import { CategoryItem } from '~/entities/category/category-item/CategoryItem'
 import { categoriesData } from '~/entities/category/category.data'
 
-const Category: FC = () => {
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
-
+const Category: FC<any> = ({ value, onClickCategory }) => {
   return (
     <div className="categories">
       <ul>
-        {categoriesData.map((category, index) => (
-          <CategoryItem
-            setState={setActiveCategoryIndex}
-            state={activeCategoryIndex}
-            title={category.title}
-            id={index}
-            key={category.title}
-          />
+        {categoriesData.map((categoryName, index) => (
+          <li
+            className={value === index ? 'active' : ''}
+            onClick={() => onClickCategory(index)}
+            key={categoryName.title}>
+            {categoryName.title}
+          </li>
         ))}
       </ul>
     </div>

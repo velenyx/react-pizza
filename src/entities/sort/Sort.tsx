@@ -1,11 +1,17 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
 import cn from 'clsx'
 
 import { useOutside } from '~/shared/lib/hooks/useOutside'
-const Sort: FC = () => {
-  const sortList = ['популярности', 'цене', 'алфавиту']
-  const [sortParam, setSortParam] = useState(sortList[0])
+const Sort: FC<any> = ({ value, onClickSort }) => {
+  const sortList = [
+    { name: 'популярности (DESC)', sortProperty: 'rating' },
+    { name: 'популярности (ASC)', sortProperty: '-rating' },
+    { name: 'цене (DESC)', sortProperty: 'price' },
+    { name: 'цене (ASC)', sortProperty: '-price' },
+    { name: 'алфавиту (DESC)', sortProperty: 'title' },
+    { name: 'алфавиту (ASC)', sortProperty: '-title' },
+  ]
 
   const { isShow, ref, setIsShow } = useOutside(false)
 
@@ -25,20 +31,22 @@ const Sort: FC = () => {
             fill="#2C2C2C"
           />
         </svg>
-        <b>Сортировка по:</b>
-        <span onClick={() => setIsShow(!isShow)}>{sortParam}</span>
+        <b>
+          <div>Сортировка</div>по:
+        </b>
+        <span onClick={() => setIsShow(!isShow)}>{value.name}</span>
       </div>
       <div className={cn('sort__popup', { ['sort__popup__active']: isShow })}>
         <ul>
           {sortList.map((sort, index) => (
             <li
-              key={sort}
-              className={sortParam === sortList[index] ? 'active' : ''}
+              key={sort.name}
+              className={value.sortProperty === sort.sortProperty ? 'active' : ''}
               onClick={() => {
-                setSortParam(sortList[index])
+                onClickSort(sort)
                 setIsShow(!isShow)
               }}>
-              {sort}
+              {sort.name}
             </li>
           ))}
         </ul>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-interface IProductCard {
+export interface IProductCard {
   id?: number
   imageUrl: string
   title: string

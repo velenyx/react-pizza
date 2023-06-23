@@ -12,7 +12,16 @@
     }
 
     b {
+      display: flex;
       margin-right: 8px;
+      gap: 3px;
+
+      @media (max-width: 390px) {
+        text-transform: capitalize;
+        & div {
+          display: none;
+        }
+      }
     }
 
     span {
@@ -31,7 +40,6 @@
     border-radius: 10px;
     overflow: hidden;
     padding: 10px 0;
-    width: 160px;
     opacity: 0;
     pointer-events: none;
 
