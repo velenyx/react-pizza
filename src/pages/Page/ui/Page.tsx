@@ -5,21 +5,22 @@ import Category from '~/entities/category/Category'
 import ProductCard, { IProductCard } from '~/entities/product-card/ProductCard'
 import Sort from '~/entities/sort/Sort'
 import { Pagination } from '~/features/pagination/Pagination'
+import { useAppSelector } from '~/shared/model/hooks'
 import { Layout, Skeleton } from '~/shared/ui'
 
 export function HomePage() {
+  const categoryId = useAppSelector(state => state.filter.category)
+  const sortRedux = useAppSelector(state => state.filter.sort)
   const { searchValue } = useContext(SearchContext)
   const [items, setItems] = useState<IProductCard[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [categoryId, setCategoryId] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const [sortType, setSortType] = useState({ name: 'популярности', sortProperty: 'rating' })
 
   useEffect(() => {
     setIsLoading(true)
     const category = categoryId > 0 ? `category=${categoryId}` : ''
-    const sortBy = sortType.sortProperty.replace('-', '')
-    const order = sortType.sortProperty.includes('-') ? 'asc' : 'desc'
+    const sortBy = sortRedux.sortProperty.replace('-', '')
+    const order = sortRedux.sortProperty.includes('-') ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
 
     fetch(
@@ -32,12 +33,12 @@ export function HomePage() {
       })
 
     window.scrollTo(0, 0)
-  }, [categoryId, sortType, currentPage, searchValue])
+  }, [categoryId, sortRedux, currentPage, searchValue])
   return (
     <Layout>
       <div className="content__top">
-        <Category value={categoryId} onClickCategory={setCategoryId} />
-        <Sort value={sortType} onClickSort={setSortType} />
+        <Category />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">

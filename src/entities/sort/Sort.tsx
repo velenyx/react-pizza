@@ -3,7 +3,11 @@ import { FC } from 'react'
 import cn from 'clsx'
 
 import { useOutside } from '~/shared/lib/hooks/useOutside'
-const Sort: FC<any> = ({ value, onClickSort }) => {
+import { useAppDispatch, useAppSelector } from '~/shared/model/hooks'
+import { setSort } from '~/widgets/filter/model/slice'
+const Sort: FC<any> = () => {
+  const sortRedux = useAppSelector(state => state.filter.sort)
+  const dispatch = useAppDispatch()
   const sortList = [
     { name: 'популярности (DESC)', sortProperty: 'rating' },
     { name: 'популярности (ASC)', sortProperty: '-rating' },
@@ -34,16 +38,16 @@ const Sort: FC<any> = ({ value, onClickSort }) => {
         <b>
           <div>Сортировка</div>по:
         </b>
-        <span onClick={() => setIsShow(!isShow)}>{value.name}</span>
+        <span onClick={() => setIsShow(!isShow)}>{sortRedux.name}</span>
       </div>
       <div className={cn('sort__popup', { ['sort__popup__active']: isShow })}>
         <ul>
-          {sortList.map((sort, index) => (
+          {sortList.map(sort => (
             <li
               key={sort.name}
-              className={value.sortProperty === sort.sortProperty ? 'active' : ''}
+              className={sortRedux.sortProperty === sort.sortProperty ? 'active' : ''}
               onClick={() => {
-                onClickSort(sort)
+                dispatch(setSort(sort))
                 setIsShow(!isShow)
               }}>
               {sort.name}
