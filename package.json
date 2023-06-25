@@ -14,6 +14,7 @@
     "axios": "^1.4.0",
     "clsx": "^1.2.1",
     "localforage": "^1.10.0",
+    "lodash.debounce": "^4.0.8",
     "match-sorter": "^6.3.1",
     "path": "^0.12.7",
     "react": "^18.2.0",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@feature-sliced/eslint-config": "^0.1.0-beta.6",
     "@types/axios": "^0.14.0",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.3.1",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",

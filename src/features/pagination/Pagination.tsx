@@ -1,18 +1,25 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { FC } from 'react'
 
 import ReactPaginate from 'react-paginate'
 
 import styles from './Pagination.module.scss'
-export const Pagination: FC<{ onChangePage: Dispatch<SetStateAction<number>> }> = ({ onChangePage }) => {
+
+import { useAppDispatch, useAppSelector } from '~/shared/model/hooks'
+import { setCurrentPage } from '~/widgets/filter/model/slice'
+export const Pagination: FC = () => {
+  const dispatch = useAppDispatch()
+  const currentPage = useAppSelector(state => state.filter.pageCount)
+
   return (
     <ReactPaginate
       className={styles.root}
       breakLabel="..."
       nextLabel=">"
       previousLabel="<"
-      onPageChange={num => onChangePage(num.selected + 1)}
+      onPageChange={num => dispatch(setCurrentPage(num.selected + 1))}
       pageRangeDisplayed={8}
       pageCount={3}
+      forcePage={currentPage - 1}
       renderOnZeroPageCount={null}
     />
   )

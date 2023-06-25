@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 
+import axios from 'axios'
+
 import { SearchContext } from '~/app/providers/search'
 import Category from '~/entities/category/Category'
 import ProductCard, { IProductCard } from '~/entities/product-card/ProductCard'
@@ -11,10 +13,10 @@ import { Layout, Skeleton } from '~/shared/ui'
 export function HomePage() {
   const categoryId = useAppSelector(state => state.filter.category)
   const sortRedux = useAppSelector(state => state.filter.sort)
+  const currentPage = useAppSelector(state => state.filter.pageCount)
   const { searchValue } = useContext(SearchContext)
   const [items, setItems] = useState<IProductCard[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     setIsLoading(true)
@@ -23,12 +25,12 @@ export function HomePage() {
     const order = sortRedux.sortProperty.includes('-') ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
 
-    fetch(
-      `https://6491e2552f2c7ee6c2c9194a.mockapi.io/api/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
-    )
-      .then(async data => await data.json())
-      .then(data => {
-        setItems(data)
+    axios
+      .get(
+        `https://6491e2552f2c7ee6c2c9194a.mockapi.io/api/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
+      )
+      .then(res => {
+        setItems(res.data)
         setIsLoading(false)
       })
 
@@ -46,7 +48,7 @@ export function HomePage() {
           ? Array.from({ length: 12 }, (_, index) => <Skeleton key={index} />)
           : items.map(product => <ProductCard {...product} key={product.id} />)}
       </div>
-      <Pagination onChangePage={setCurrentPage} />
+      <Pagination />
     </Layout>
   )
 }
