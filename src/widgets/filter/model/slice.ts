@@ -5,12 +5,14 @@ interface Sort {
 }
 
 type FilterSliceState = {
+  searchValue: string
   category: number
   pageCount: number
   sort: Sort
 }
 
 const initialState: FilterSliceState = {
+  searchValue: '',
   category: 0,
   pageCount: 1,
   sort: { name: 'популярности', sortProperty: 'rating' },
@@ -20,6 +22,9 @@ export const filterSlice = createSlice({
   name: 'filter',
   initialState,
   reducers: {
+    setSearchValue: (state: FilterSliceState, { payload }) => {
+      state.searchValue = payload
+    },
     setCategory: (state: FilterSliceState, { payload }) => {
       state.category = payload
     },
@@ -38,6 +43,6 @@ export const filterSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setCategory, setSort, setCurrentPage, setFilters } = filterSlice.actions
+export const { setCategory, setSort, setCurrentPage, setFilters, setSearchValue } = filterSlice.actions
 
 export default filterSlice.reducer

@@ -1,25 +1,26 @@
-import { FC, useCallback, useContext, useRef, useState } from 'react'
+import { FC, useCallback, useRef, useState } from 'react'
 
 import debounce from 'lodash.debounce'
 
 import styles from './Search.module.scss'
 
-import { SearchContext } from '~/app/providers/search'
+import { useAppDispatch } from '~/shared/model/hooks'
+import { setSearchValue } from '~/widgets/filter/model/slice'
 
 export const Search: FC = () => {
+  const dispatch = useAppDispatch()
   const [value, setValue] = useState('')
-  const { setSearchValue } = useContext(SearchContext)
   const searchRef = useRef<HTMLInputElement>(null)
 
   const updateSearchValue = useCallback(
     debounce(str => {
-      setSearchValue(str)
+      dispatch(setSearchValue(str))
     }, 250),
     [],
   )
 
   const onClickClear = () => {
-    setSearchValue('')
+    dispatch(setSearchValue(''))
     setValue('')
     if (searchRef.current) {
       searchRef.current.focus()

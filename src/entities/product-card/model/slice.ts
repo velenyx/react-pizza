@@ -25,11 +25,16 @@ interface fetchPizzasProps {
 
 export const fetchPizzas = createAsyncThunk(
   'pizza/fetchPizzasStatus',
-  async ({ category, order, search, sortBy, currentPage }: fetchPizzasProps) => {
+  async ({ category, order, search, sortBy, currentPage }: fetchPizzasProps, thunkAPI) => {
     const { data } = await axios.get(
       `https://6491e2552f2c7ee6c2c9194a.mockapi.io/api/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
     )
-    return data as IProductCard[]
+
+    if (!data.length) {
+      return thunkAPI.rejectWithValue('Пиццы пустые')
+    }
+
+    return thunkAPI.fulfillWithValue(data) as IProductCard[]
   },
 )
 

@@ -1,16 +1,15 @@
-import { useContext, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { parse, stringify } from 'qs'
 import { useNavigate } from 'react-router-dom'
 
-import { SearchContext } from '~/app/providers/search'
 import Category from '~/entities/category/Category'
 import { fetchPizzas } from '~/entities/product-card/model/slice'
 import ProductCard from '~/entities/product-card/ProductCard'
 import Sort, { sortList } from '~/entities/sort/Sort'
 import { Pagination } from '~/features/pagination/Pagination'
 import { useAppDispatch, useAppSelector } from '~/shared/model/hooks'
-import { Layout, Skeleton } from '~/shared/ui'
+import { Skeleton } from '~/shared/ui'
 import { setFilters } from '~/widgets/filter/model/slice'
 
 export const HomePage = () => {
@@ -19,11 +18,13 @@ export const HomePage = () => {
   const isSearch = useRef(false)
   const isMounted = useRef(false)
 
-  const categoryId = useAppSelector(state => state.filter.category)
-  const sortRedux = useAppSelector(state => state.filter.sort)
-  const currentPage = useAppSelector(state => state.filter.pageCount)
+  const {
+    category: categoryId,
+    pageCount: currentPage,
+    sort: sortRedux,
+    searchValue,
+  } = useAppSelector(state => state.filter)
   const { items, status } = useAppSelector(state => state.pizza)
-  const { searchValue } = useContext(SearchContext)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -75,7 +76,7 @@ export const HomePage = () => {
     isSearch.current = false
   }, [categoryId, sortRedux, currentPage, searchValue, isSearch])
   return (
-    <Layout>
+    <>
       <div className="content__top">
         <Category />
         <Sort />
@@ -93,6 +94,6 @@ export const HomePage = () => {
         )}
       </div>
       <Pagination />
-    </Layout>
+    </>
   )
 }
