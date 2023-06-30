@@ -5,17 +5,19 @@ import cn from 'clsx'
 import { useOutside } from '~/shared/lib/hooks/useOutside'
 import { useAppDispatch, useAppSelector } from '~/shared/model/hooks'
 import { setSort } from '~/widgets/filter/model/slice'
+
+export const sortList = [
+  { name: 'популярности (DESC)', sortProperty: 'rating' },
+  { name: 'популярности (ASC)', sortProperty: '-rating' },
+  { name: 'цене (DESC)', sortProperty: 'price' },
+  { name: 'цене (ASC)', sortProperty: '-price' },
+  { name: 'алфавиту (DESC)', sortProperty: 'title' },
+  { name: 'алфавиту (ASC)', sortProperty: '-title' },
+]
+
 const Sort: FC<any> = () => {
   const sortRedux = useAppSelector(state => state.filter.sort)
   const dispatch = useAppDispatch()
-  const sortList = [
-    { name: 'популярности (DESC)', sortProperty: 'rating' },
-    { name: 'популярности (ASC)', sortProperty: '-rating' },
-    { name: 'цене (DESC)', sortProperty: 'price' },
-    { name: 'цене (ASC)', sortProperty: '-price' },
-    { name: 'алфавиту (DESC)', sortProperty: 'title' },
-    { name: 'алфавиту (ASC)', sortProperty: '-title' },
-  ]
 
   const { isShow, ref, setIsShow } = useOutside(false)
 

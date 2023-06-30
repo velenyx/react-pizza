@@ -1,41 +1,79 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 
-import axios from 'axios'
+import { parse, stringify } from 'qs'
+import { useNavigate } from 'react-router-dom'
 
 import { SearchContext } from '~/app/providers/search'
 import Category from '~/entities/category/Category'
-import ProductCard, { IProductCard } from '~/entities/product-card/ProductCard'
-import Sort from '~/entities/sort/Sort'
+import { fetchPizzas } from '~/entities/product-card/model/slice'
+import ProductCard from '~/entities/product-card/ProductCard'
+import Sort, { sortList } from '~/entities/sort/Sort'
 import { Pagination } from '~/features/pagination/Pagination'
-import { useAppSelector } from '~/shared/model/hooks'
+import { useAppDispatch, useAppSelector } from '~/shared/model/hooks'
 import { Layout, Skeleton } from '~/shared/ui'
+import { setFilters } from '~/widgets/filter/model/slice'
 
-export function HomePage() {
+export const HomePage = () => {
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const isSearch = useRef(false)
+  const isMounted = useRef(false)
+
   const categoryId = useAppSelector(state => state.filter.category)
   const sortRedux = useAppSelector(state => state.filter.sort)
   const currentPage = useAppSelector(state => state.filter.pageCount)
+  const { items, status } = useAppSelector(state => state.pizza)
   const { searchValue } = useContext(SearchContext)
-  const [items, setItems] = useState<IProductCard[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    setIsLoading(true)
+    window.scrollTo(0, 0)
+    if (window.location.search) {
+      const params = parse(window.location.search.substring(1))
+
+      const sort = sortList.find(obj => obj.sortProperty === params.sortProperty)
+
+      dispatch(setFilters({ ...params, sort }))
+      isSearch.current = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const queryString = stringify({
+        sortProperty: sortRedux.sortProperty,
+        categoryId,
+        currentPage,
+      })
+
+      navigate(`?${queryString}`)
+    }
+    isMounted.current = true
+  }, [categoryId, sortRedux, currentPage, searchValue])
+
+  const getPizzas = () => {
     const category = categoryId > 0 ? `category=${categoryId}` : ''
     const sortBy = sortRedux.sortProperty.replace('-', '')
     const order = sortRedux.sortProperty.includes('-') ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
 
-    axios
-      .get(
-        `https://6491e2552f2c7ee6c2c9194a.mockapi.io/api/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`,
-      )
-      .then(res => {
-        setItems(res.data)
-        setIsLoading(false)
-      })
+    dispatch(
+      fetchPizzas({
+        sortBy,
+        order,
+        category,
+        search,
+        currentPage,
+      }),
+    )
+  }
 
-    window.scrollTo(0, 0)
-  }, [categoryId, sortRedux, currentPage, searchValue])
+  useEffect(() => {
+    if (!isSearch.current) {
+      getPizzas()
+    }
+
+    isSearch.current = false
+  }, [categoryId, sortRedux, currentPage, searchValue, isSearch])
   return (
     <Layout>
       <div className="content__top">
@@ -44,9 +82,15 @@ export function HomePage() {
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
-        {isLoading
-          ? Array.from({ length: 12 }, (_, index) => <Skeleton key={index} />)
-          : items.map(product => <ProductCard {...product} key={product.id} />)}
+        {status === 'loading' ? (
+          Array.from({ length: 12 }, (_, index) => <Skeleton key={index} />)
+        ) : status === 'error' ? (
+          <h2 className="content__error_info">
+            К сожалению произошла какая-то ошибка, попробуйте повторить запрос позже
+          </h2>
+        ) : (
+          items.map(product => <ProductCard {...product} key={product.id} />)
+        )}
       </div>
       <Pagination />
     </Layout>

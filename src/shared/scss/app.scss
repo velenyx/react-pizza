@@ -28,6 +28,14 @@ body {
 .content {
   padding: 40px 0;
 
+  &__error_info {
+    max-width: 600px;
+    text-align: center;
+    grid-column: span 4;
+    margin-top: 60px;
+    margin-bottom: 80px;
+  }
+
   &__title {
     margin: 35px 0;
     font-size: 42px;
@@ -302,7 +310,8 @@ body {
     text-align: center;
 
     h2 {
-      font-size: 32px;
+      font-size: 36px;
+      font-weight: 700;
       margin-bottom: 10px;
     }
 

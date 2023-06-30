@@ -29,10 +29,15 @@ export const filterSlice = createSlice({
     setCurrentPage: (state: FilterSliceState, { payload }) => {
       state.pageCount = payload
     },
+    setFilters: (state: FilterSliceState, { payload }) => {
+      state.pageCount = Number(payload.currentPage)
+      state.sort = payload.sort
+      state.category = Number(payload.categoryId)
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setCategory, setSort, setCurrentPage } = filterSlice.actions
+export const { setCategory, setSort, setCurrentPage, setFilters } = filterSlice.actions
 
 export default filterSlice.reducer
